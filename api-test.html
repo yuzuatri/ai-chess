@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API quick test — Chess Observatory</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2310161f'/%3E%3Cpath d='M6 6h10v10H6zm10 10h10v10H16z' fill='%237fbfff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    main{max-width:800px}h1{font-size:32px}header{margin-bottom:24px}.intro{color:var(--muted);margin:12px 0 0}.test-form{display:grid;gap:16px}.test-form label{margin-bottom:6px}.test-form select,.test-form textarea{width:100%}textarea{background:var(--bg);color:var(--text);border:1px solid #435269;border-radius:5px;padding:10px;font:inherit;resize:vertical}.test-actions{display:flex;gap:12px}.test-actions button{padding:11px 20px}.result-panel{margin-top:20px}pre{font:13px/1.6 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:500px;overflow:auto;color:#d9e5f3;margin:0}.result-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}#test-status{font-size:15px;font-weight:600}#test-status[data-kind=ok]{color:#a6dda8}#test-status[data-kind=error]{color:#ffb2aa}.fine-print{margin-bottom:0}.test-home{display:inline-block;margin-top:24px;font-size:14px}
+  </style>
+  <script type="module" src="./api-test.js"></script>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">CHESS OBSERVATORY / LOCAL TOOL</p><h1>API quick test</h1><p class="intro">Send one simple request. See exactly what the provider returns.</p></header>
+    <section class="panel">
+      <form id="test-form" class="test-form">
+        <div><label for="provider">Provider</label><select id="provider"><option value="gemini">Google Gemini</option><option value="groq">Groq</option><option value="openrouter">OpenRouter</option><option value="custom">Custom</option></select></div>
+        <div><label for="test-url">API URL</label><input id="test-url" type="url" value="https://generativelanguage.googleapis.com/v1beta/openai/chat/completions" required autocomplete="off" spellcheck="false"></div>
+        <div><label for="test-model">Model ID</label><input id="test-model" placeholder="Paste the exact model ID you want to test" required autocomplete="off" spellcheck="false"></div>
+        <div><label for="test-key">API key</label><input id="test-key" type="password" placeholder="Paste your key here" required autocomplete="off" spellcheck="false"></div>
+        <div><label for="test-prompt">Message</label><textarea id="test-prompt" rows="2" required>Reply with OK</textarea></div>
+        <div class="test-actions"><button id="send-test" class="primary-button" type="submit">Send test</button><button id="cancel-test" class="secondary-button" type="button" disabled>Cancel</button></div>
+      </form>
+      <p class="fine-print">Runs curl on this computer. Keys aren’t saved or put in command history. One request per click; provider charges may apply.</p>
+    </section>
+    <section class="panel result-panel" aria-label="Test result">
+      <div class="result-head"><span id="test-status" role="status" aria-live="polite">Ready to test</span><button id="copy-result" class="text-button" type="button" disabled>Copy response</button></div>
+      <pre id="test-output">The HTTP headers and response body will appear here.</pre>
+      <p class="fine-print">A 200 response with a reply means the model answered. A 400 response should explain what it rejected. Curl does not check browser CORS, so a working test may still need browser access for the chess app.</p>
+    </section>
+    <a class="test-home" href="./">← Back to chess</a>
+  </main>
+</body>
+</html>

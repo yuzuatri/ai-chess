@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10161f">
+  <meta name="description" content="A quiet place to watch two AI players play chess. Bring your own models, or try a local demo.">
+  <title>Chess Observatory — AI vs. AI</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2310161f'/%3E%3Cpath d='M6 6h10v10H6zm10 10h10v10H16z' fill='%237fbfff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Chess Observatory home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span> CHESS <span>OBSERVATORY</span></a>
+    <span class="header-note">Two minds. One board.</span>
+  </header>
+  <main>
+    <div class="page-heading"><div><p class="eyebrow">TAKE A SEAT</p><h1>Let the minds play.</h1></div><span class="mode-badge" id="mode-badge">LOCAL DEMO</span></div>
+    <div class="workspace">
+      <section class="arena" aria-label="Chess match">
+        <div class="player-strip" id="player-b"><span class="player-avatar dark-avatar" aria-hidden="true">♟︎</span><div class="player-info"><span class="player-color">BLACK</span><strong id="name-b">Obsidian</strong><span class="captured" id="captured-b" aria-label="Pieces captured by Black"></span></div><span class="player-state" id="state-b">Waiting</span></div>
+        <div class="board-frame"><div id="board" class="board" role="img" aria-label="Chess board, starting position"></div></div>
+        <div class="player-strip" id="player-w"><span class="player-avatar light-avatar" aria-hidden="true">♟︎</span><div class="player-info"><span class="player-color">WHITE</span><strong id="name-w">Ivory</strong><span class="captured" id="captured-w" aria-label="Pieces captured by White"></span></div><span class="player-state" id="state-w">Ready</span></div>
+        <div class="board-footer"><span id="position-label">Starting position</span><button type="button" class="text-button" id="flip">⇅ Flip board</button></div>
+      </section>
+      <aside class="sidebar" aria-label="Match controls and moves">
+        <section class="panel setup-panel">
+          <div class="panel-heading"><h2>The matchup</h2><span class="small-label">AI vs. AI</span></div>
+          <fieldset id="setup-fields">
+            <legend class="sr-only">Player settings</legend>
+            <div class="mode-switch" role="group" aria-label="Player source"><button type="button" id="demo-mode" aria-pressed="true">Local demo</button><button type="button" id="api-mode" aria-pressed="false">AI models</button></div>
+            <p class="setup-hint" id="demo-hint">Two lightweight chess bots. No key, no cost. Just press play.</p>
+            <div id="api-settings" hidden>
+              <p class="setup-hint">Two models, two connections. Set up each player with its own provider.</p>
+              <fieldset class="api-player">
+                <legend>White player</legend>
+                <label for="white-endpoint">White API URL</label><input id="white-endpoint" type="url" placeholder="https://provider.com/v1/chat/completions" autocomplete="off" spellcheck="false">
+                <label for="white-key">White API key</label><input id="white-key" type="password" placeholder="Key for White’s provider" autocomplete="off" spellcheck="false">
+                <label for="white-model">White model</label><input id="white-model" placeholder="Exact model ID" autocomplete="off" spellcheck="false">
+              </fieldset>
+              <fieldset class="api-player">
+                <legend>Black player</legend>
+                <label for="black-endpoint">Black API URL</label><input id="black-endpoint" type="url" placeholder="https://provider.com/v1/chat/completions" autocomplete="off" spellcheck="false">
+                <label for="black-key">Black API key</label><input id="black-key" type="password" placeholder="Key for Black’s provider" autocomplete="off" spellcheck="false">
+                <label for="black-model">Black model</label><input id="black-model" placeholder="Exact model ID" autocomplete="off" spellcheck="false">
+              </fieldset>
+              <details class="advanced"><summary>Which APIs work?</summary><p class="fine-print">Use the full HTTPS chat completions URL from each provider. Both APIs must accept bearer keys and the chat completions format, and allow browser requests (CORS). Native messages or generate-content endpoints need an adapter.</p><p class="fine-print">You can also use <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer">OpenRouter</a> for either player: <code>https://openrouter.ai/api/v1/chat/completions</code>, with an exact ID from its <a href="https://openrouter.ai/models" target="_blank" rel="noopener noreferrer">model catalog</a>.</p></details>
+              <p class="fine-print">Each key is sent only to that player’s API URL and stays in this tab’s memory. API usage is billed by each provider.</p>
+            </div>
+            <div class="limit-setting"><label for="move-limit">Move limit</label><select id="move-limit"><option value="40">40 moves</option><option value="80" selected>80 moves</option><option value="150">150 moves</option></select></div>
+          </fieldset>
+          <div class="match-status" role="status" aria-live="polite"><span class="status-dot" id="status-dot"></span><span id="status">Ready when you are</span></div>
+          <div id="error" role="alert" hidden></div>
+          <div class="main-controls"><button type="button" id="play" class="primary-button" disabled>Loading…</button><button type="button" id="reset" class="secondary-button">New game</button></div>
+          <div class="pace-control"><label for="pace">Between moves</label><select id="pace"><option value="500">0.5 seconds</option><option value="1500" selected>1.5 seconds</option><option value="3000">3 seconds</option></select></div>
+          <p class="fine-print" id="api-timing" hidden>Model response time is additional. Pause cancels the pending request; your provider may still bill it.</p>
+        </section>
+        <section class="panel moves-panel">
+          <div class="panel-heading"><h2>Move journal</h2><span class="move-count" id="move-count">0 moves</span></div>
+          <div class="latest-move"><span class="eyebrow" id="latest-label">OPENING SCENE</span><p id="latest-note">The board is set. The next move is theirs.</p></div>
+          <div class="move-table-header" aria-hidden="true"><span>#</span><span>White</span><span>Black</span></div>
+          <div id="move-scroll" class="move-scroll"><table aria-label="Move history"><thead class="sr-only"><tr><th>Move</th><th>White</th><th>Black</th></tr></thead><tbody id="moves"></tbody></table><p id="empty-moves">Every game starts with a possibility.</p></div>
+          <div class="journal-footer"><span id="request-count">No API calls</span><button type="button" id="download" class="text-button" disabled>↓ Save PGN</button></div>
+        </section>
+      </aside>
+    </div>
+    <footer class="site-footer"><span>A front-row seat to artificial intelligence.</span><span>Legal moves. Unscripted games.</span></footer>
+    <noscript>This chess app needs JavaScript enabled.</noscript>
+  </main>
+</body>
+</html>
