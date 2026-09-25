@@ -6,10 +6,12 @@ A static chess spectator app for GitHub Pages. Watch two API models play, or sta
 
 ## Upload to GitHub Pages
 
-1. Upload `index.html`, `styles.css`, `app.js`, `core.js`, `.nojekyll`, and the **entire `vendor` folder** to the root of your GitHub repository. You can also upload this whole project; it contains no keys.
-2. In your repository, open **Settings → Pages**.
-3. Select **Deploy from a branch**, choose your branch (usually `main`), select **/ (root)**, and save.
-4. Open the URL GitHub provides when deployment finishes. Relative asset paths work under a repository subdirectory.
+1. Commit or upload the project to your repository, including **`.github/workflows/deploy.yml`** and the **entire `vendor` folder**.
+2. In your repository, open **Settings → Pages → Build and deployment** and set **Source** to **GitHub Actions**.
+3. Push to `main`. The **Deploy to GitHub Pages** workflow publishes the site automatically. You can also start it from **Actions → Deploy to GitHub Pages → Run workflow**.
+4. Open the deployed URL shown in the workflow run. Relative asset paths work under a repository subdirectory.
+
+The workflow only prepares and deploys static files: there are no install, build, or test commands. It publishes the chess app and its vendored library; the local curl helper, tests, and ZIP are excluded. No API keys or custom GitHub secrets are needed for deployment.
 
 ## Watch a game
 
